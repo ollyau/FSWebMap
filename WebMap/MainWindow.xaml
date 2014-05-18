@@ -1,0 +1,40 @@
+﻿<Window x:Class="WebMap.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:local="clr-namespace:WebMap"
+        Title="Web Map" SizeToContent="Height" Width="300" ResizeMode="CanMinimize">
+    <Window.DataContext>
+        <local:MainViewModel />
+    </Window.DataContext>
+    <Window.Resources>
+        <local:ConnectedTitleConverter x:Key="ConnectedTitleConverter"/>
+        <local:ConnectedButtonConverter x:Key="ConnectedButtonConverter"/>
+        <local:WebServerButtonConverter x:Key="WebServerButtonConverter"/>
+        <local:InverseBooleanConverter x:Key="InverseBooleanConverter"/>
+        <BooleanToVisibilityConverter x:Key="BoolToVis" />
+    </Window.Resources>
+    <Grid Margin="5">
+        <!-- Rows for each section -->
+        <Grid.RowDefinitions>
+            <RowDefinition Height="auto"/>
+            <RowDefinition Height="auto"/>
+            <RowDefinition Height="auto"/>
+        </Grid.RowDefinitions>
+        <!-- SimConnect Section -->
+        <GroupBox Header="{Binding SimConnectConnected, Converter={StaticResource ConnectedTitleConverter}}" Grid.Row="0">
+            <Button x:Name="Button_Connect" Content="{Binding SimConnectConnected, Converter={StaticResource ConnectedButtonConverter}}" Grid.Column="0" Margin="5" Padding="5"/>
+        </GroupBox>
+        <!-- SimConnect Section -->
+        <GroupBox Header="Web Server" Grid.Row="1">
+            <Button x:Name="Button_EnableWebServer" Content="{Binding WebServerOff, Converter={StaticResource WebServerButtonConverter}}" IsEnabled="{Binding SimConnectConnected}" Grid.Column="0" Margin="5" Padding="5"/>
+        </GroupBox>
+        <!-- Output Section -->
+        <Expander Header="Advanced" Grid.Row="2" Margin="0,5" Visibility="{Binding Path=LoggingEnabled, Converter={StaticResource BoolToVis}}">
+            <GroupBox Header="Output" Height="200">
+                <ScrollViewer local:ScrollHelper.AutoScroll="{Binding IsLogsChangedPropertyInViewModel}" HorizontalScrollBarVisibility="Disabled" VerticalScrollBarVisibility="Auto">
+                    <TextBlock  Text="{Binding TextOutput}" TextWrapping="Wrap"/>
+                </ScrollViewer>
+            </GroupBox>
+        </Expander>
+    </Grid>
+</Window>

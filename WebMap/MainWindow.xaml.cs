@@ -20,12 +20,7 @@ namespace WebMap {
     public partial class MainWindow : Window {
         public MainWindow() {
             InitializeComponent();
-
-            // handle the events in the MainViewModel class
-            MainViewModel vm = (MainViewModel)this.DataContext;
-            Closing += vm.MainWindow_Closing;
-            Button_Connect.Click += vm.Button_Connect_Click;
-            Button_EnableWebServer.Click += vm.Button_EnableWebServer_Click;
+            this.Closing += ((MainViewModel)this.DataContext).MainWindow_Closing;
         }
     }
 }

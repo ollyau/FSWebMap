@@ -6,7 +6,6 @@ using System.Text;
 using System.Threading.Tasks;
 
 namespace WebMap {
-
     /// <summary>
     /// Based on code from:
     /// https://www.codehosting.net/blog/BlogEngine/post/Simple-C-Web-Server.aspx
@@ -38,8 +37,7 @@ namespace WebMap {
 
         public WebServer(string[] prefixes, Func<HttpListenerRequest, string> method) {
             if (!HttpListener.IsSupported)
-                throw new NotSupportedException(
-                    "Needs Windows XP SP2, Server 2003 or later.");
+                throw new NotSupportedException("Needs Windows XP SP2, Server 2003 or later.");
 
             // URI prefixes are required, for example 
             // "http://localhost:8080/index/".
@@ -73,7 +71,7 @@ namespace WebMap {
                                 ctx.Response.ContentLength64 = buf.Length;
                                 ctx.Response.OutputStream.Write(buf, 0, buf.Length);
                             }
-                            catch { } // suppress any exceptions
+                            catch (HttpListenerException) { } // suppress any exceptions
                             finally {
                                 // always close the stream
                                 ctx.Response.OutputStream.Close();

@@ -6,14 +6,15 @@ A utility that starts a web server to display a live map with position updates f
 Usage
 ---
 
-Launch the program after Flight Simulator has started, connect to the simulator, then start the web server.  The map should then be viewable at http://localhost:8081/.
+Launch the program after Flight Simulator has started, connect to the simulator, then start the web server.  The map should then be viewable at http://localhost:8081/.  Run ipconfig at the command line to find your local IP address to view the map on another device on your network.
 
 Known Issues
 ---
 
-If you close Flight Simulator, SimConnect will automatically disconnect, but the web server will remain running.
+* None currently.
 
 Roadmap
 ---
 
-* Implement an airplane marker on the map that rotates with the heading of the aircraft in the sim
+* Allow user to define port
+* Display traffic

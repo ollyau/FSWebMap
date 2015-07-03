@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -7,33 +8,31 @@ using System.Windows;
 using System.Windows.Data;
 
 namespace WebMap {
-    class ConnectedTitleConverter : IValueConverter {
-        public object Convert(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture) {
-            return (bool)value ? "SimConnect: Connected" : "SimConnect: Disconnected";
+    public class BooleanConverter<T> : IValueConverter {
+        public BooleanConverter(T trueValue, T falseValue) {
+            True = trueValue;
+            False = falseValue;
         }
 
-        public object ConvertBack(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture) {
-            throw new NotSupportedException();
+        public T True { get; set; }
+        public T False { get; set; }
+
+        public virtual object Convert(object value, Type targetType, object parameter, CultureInfo culture) {
+            return value is bool && ((bool)value) ? True : False;
+        }
+
+        public virtual object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture) {
+            return value is T && EqualityComparer<T>.Default.Equals((T)value, True);
         }
     }
 
-    class ConnectedButtonConverter : IValueConverter {
-        public object Convert(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture) {
-            return (bool)value ? "Disconnect" : "Connect";
-        }
-
-        public object ConvertBack(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture) {
-            throw new NotSupportedException();
-        }
+    public sealed class InverseBooleanConverter : BooleanConverter<bool> {
+        public InverseBooleanConverter() :
+            base(false, true) { }
     }
 
-    class WebServerButtonConverter : IValueConverter {
-        public object Convert(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture) {
-            return (bool)value ? "Start Web Server" : "Stop Web Server";
-        }
-
-        public object ConvertBack(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture) {
-            throw new NotSupportedException();
-        }
+    public sealed class BooleanToStringConverter : BooleanConverter<string> {
+        public BooleanToStringConverter() :
+            base("True", "False") { }
     }
 }

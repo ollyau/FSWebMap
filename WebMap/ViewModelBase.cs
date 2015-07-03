@@ -1,9 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.ComponentModel;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using System.Runtime.CompilerServices;
 
 namespace WebMap {
     class ViewModelBase : INotifyPropertyChanged {
@@ -14,7 +11,7 @@ namespace WebMap {
                 handler(this, new PropertyChangedEventArgs(propertyName));
             }
         }
-        protected bool SetProperty<T>(ref T field, T value, [System.Runtime.CompilerServices.CallerMemberName] string propertyName = null) {
+        protected bool SetProperty<T>(ref T field, T value, [CallerMemberName] string propertyName = null) {
             if (EqualityComparer<T>.Default.Equals(field, value)) {
                 return false;
             }

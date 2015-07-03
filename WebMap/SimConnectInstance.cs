@@ -44,17 +44,34 @@ namespace WebMap {
         }
     }
 
-    class SimConnectInstance : ViewModelBase {
-        MainViewModel sender;
-        SimConnect sc = null;
-        const string appName = "Web Map";
+    public class OpenEventArgs : EventArgs {
+        public string SimulatorName { get; private set; }
+        public OpenEventArgs(string SimulatorName) {
+            this.SimulatorName = SimulatorName;
+        }
+    }
 
+    class SimConnectInstance {
+        private MainViewModel sender;
+        private SimConnect sc = null;
+        private const string appName = "Web Map";
+
+        public EventHandler<OpenEventArgs> OpenEvent;
+        public EventHandler DisconnectEvent;
         public LatLon userPos { get; private set; }
 
-        private bool _isConnected = false;
-        public bool IsConnected {
-            get { return _isConnected; }
-            private set { SetProperty(ref _isConnected, value); }
+        protected virtual void OnRaiseOpenEvent(OpenEventArgs e) {
+            EventHandler<OpenEventArgs> handler = OpenEvent;
+            if (handler != null) {
+                handler(this, e);
+            }
+        }
+
+        protected virtual void OnRaiseDisconnectEvent(EventArgs e) {
+            EventHandler handler = DisconnectEvent;
+            if (handler != null) {
+                handler(this, e);
+            }
         }
 
         public SimConnectInstance(MainViewModel sender) {
@@ -83,23 +100,23 @@ namespace WebMap {
         public void Disconnect() {
             sc.Close();
             sender.TryDisableWebServer();
-            IsConnected = false;
+            OnRaiseDisconnectEvent(EventArgs.Empty);
         }
 
-        void sc_OnRecvOpen(BeatlesBlog.SimConnect.SimConnect sender, BeatlesBlog.SimConnect.SIMCONNECT_RECV_OPEN data) {
-            IsConnected = true;
+        private void sc_OnRecvOpen(SimConnect sender, SIMCONNECT_RECV_OPEN data) {
+            OnRaiseOpenEvent(new OpenEventArgs(data.szApplicationName));
             sc.RequestDataOnUserSimObject(Requests.UserPosition, SIMCONNECT_PERIOD.SECOND, SIMCONNECT_DATA_REQUEST_FLAG.CHANGED, typeof(LatLon));
         }
 
-        void sc_OnRecvException(BeatlesBlog.SimConnect.SimConnect sender, BeatlesBlog.SimConnect.SIMCONNECT_RECV_EXCEPTION data) {
-            sc.Text(SIMCONNECT_TEXT_TYPE.PRINT_WHITE, 10.0f, Requests.DisplayText, appName + " SimConnect Exception: " + data.dwException.ToString() + " (" + Enum.GetName(typeof(SIMCONNECT_EXCEPTION), data.dwException) + ")");
+        private void sc_OnRecvException(SimConnect sender, SIMCONNECT_RECV_EXCEPTION data) {
+            sc.Text(SIMCONNECT_TEXT_TYPE.PRINT_WHITE, 10.0f, Requests.DisplayText, string.Format("{0} SimConnect Exception: {1} ({2})", appName, data.dwException.ToString(), Enum.GetName(typeof(SIMCONNECT_EXCEPTION), data.dwException)));
         }
 
-        void sc_OnRecvQuit(BeatlesBlog.SimConnect.SimConnect sender, BeatlesBlog.SimConnect.SIMCONNECT_RECV data) {
+        private void sc_OnRecvQuit(SimConnect sender, SIMCONNECT_RECV data) {
             Disconnect();
         }
 
-        void sc_OnRecvSimobjectData(SimConnect sender, SIMCONNECT_RECV_SIMOBJECT_DATA data) {
+        private void sc_OnRecvSimobjectData(SimConnect sender, SIMCONNECT_RECV_SIMOBJECT_DATA data) {
             if ((Requests)data.dwRequestID == Requests.UserPosition) {
                 userPos = (LatLon)data.dwData;
             }

@@ -60,7 +60,7 @@ namespace WebMap {
 
         public void Run() {
             System.Threading.ThreadPool.QueueUserWorkItem((o) => {
-                Console.WriteLine("Webserver running...");
+                System.Diagnostics.Debug.WriteLine("Webserver running...");
                 try {
                     while (_listener.IsListening) {
                         System.Threading.ThreadPool.QueueUserWorkItem((c) => {

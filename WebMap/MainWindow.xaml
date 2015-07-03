@@ -7,9 +7,9 @@
         <local:MainViewModel />
     </Window.DataContext>
     <Window.Resources>
-        <local:ConnectedTitleConverter x:Key="ConnectedTitleConverter"/>
-        <local:ConnectedButtonConverter x:Key="ConnectedButtonConverter"/>
-        <local:WebServerButtonConverter x:Key="WebServerButtonConverter"/>
+        <local:BooleanToStringConverter x:Key="ConnectedTitleConverter" True="SimConnect: Connected" False="SimConnect: Disconnected"/>
+        <local:BooleanToStringConverter x:Key="ConnectedButtonConverter" True="Disconnect" False="Connect"/>
+        <local:BooleanToStringConverter x:Key="WebServerButtonConverter" True="Start Web Server" False="Stop Web Server"/>
     </Window.Resources>
     <Grid Margin="5">
         <Grid.RowDefinitions>
